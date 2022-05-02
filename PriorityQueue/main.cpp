@@ -58,6 +58,7 @@ void testMin(PriorityQueue q, int num)
 }
 int main()
 {
+	//testing git
 	srand(time(NULL));
 	PriorityQueue maxQueue(PriorityQueue::max);
 	PriorityQueue minQueue(PriorityQueue::min);
