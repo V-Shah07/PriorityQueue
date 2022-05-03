@@ -11,21 +11,22 @@ public:
 		max = false
 	};
 private:
-	int* arr;
-	int length;
+	void** arr;
+	int arrLength;
+	int elementSize;
 	Type treeType;
 
 private:
 	void increaseSize();
-	void addToMin(int val);
-	void addToMax(int val);
-	int getMin();
-	int getMax();
+	void addToMin(void* val);
+	void addToMax(void* val);
+	void* getMin();
+	void* getMax();
+	int (*cmp)(void*, void*);
 public:
-	PriorityQueue(Type t);
-	PriorityQueue(Type t, int len);
+	PriorityQueue(Type t, int size, int (*compare)(void*, void*));
 	int getLength();
-	int* getArray();
-	void add(int val);
-	int get();
+	void add(void* val);
+	void* get();
+	void* look();
 };

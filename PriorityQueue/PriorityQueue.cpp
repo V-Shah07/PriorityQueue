@@ -3,18 +3,22 @@
 
 void PriorityQueue::increaseSize()
 {
-	arr = (int*)realloc(arr, (2 * length + 1) * sizeof(int));
-	++length;
+	arr = (void**)realloc(arr, (2 * arrLength + 1) * sizeof(void*));
+	/*for (int i = arrLength; i < 2 * arrLength + 1; ++i)
+	{
+		arr[i] = calloc(1, sizeof(void));
+	}*/
+	++arrLength;
 }
 
-void PriorityQueue::addToMin(int val)
+void PriorityQueue::addToMin(void* val)
 {
-	int insertIndex = length;
+	int insertIndex = arrLength;
 	increaseSize();
 	arr[insertIndex] = val;
 	int valIndex = insertIndex; //index of where value is located
 	int swapIndex;
-	int temp;
+	void* temp;
 	while (true)
 	{
 		swapIndex = (valIndex - 1) / 2;
@@ -22,7 +26,7 @@ void PriorityQueue::addToMin(int val)
 		{
 			swapIndex = 0;
 		}
-		if (arr[valIndex] < arr[swapIndex])
+		if (cmp(arr[valIndex], arr[swapIndex]) < 0) //child is less than parent so swap is needed
 		{
 			temp = arr[valIndex];
 			arr[valIndex] = arr[swapIndex];
@@ -36,14 +40,14 @@ void PriorityQueue::addToMin(int val)
 	}
 }
 
-void PriorityQueue::addToMax(int val)
+void PriorityQueue::addToMax(void* val)
 {
-	int insertIndex = length;
+	int insertIndex = arrLength;
 	increaseSize(); //length is changed over here
 	arr[insertIndex] = val;
 	int valIndex = insertIndex; //index of where value is located
 	int swapIndex;
-	int temp;
+	void* temp;
 	while (true)
 	{
 		swapIndex = (valIndex - 1) / 2;
@@ -51,7 +55,7 @@ void PriorityQueue::addToMax(int val)
 		{
 			return;
 		}
-		if (arr[valIndex] > arr[swapIndex])
+		if (cmp(arr[valIndex], arr[swapIndex]) > 0) //child is greater than parent so swap is needed
 		{
 			temp = arr[valIndex];
 			arr[valIndex] = arr[swapIndex];
@@ -65,38 +69,38 @@ void PriorityQueue::addToMax(int val)
 	}
 }
 
-int PriorityQueue::getMin()
+void* PriorityQueue::getMin()
 {
-	int returnValue = arr[0];
-	arr[0] = arr[length - 1];
+	void* returnValue = arr[0];
+	arr[0] = arr[arrLength - 1];
 
 	int headIndex = 0;
 	int swapIndex;
-	int temp;
+	void* temp;
 	while (true)
 	{
 		//determining smallest child
-		if ((headIndex * 2 + 1 < length) && (headIndex * 2 + 2 < length))
+		if ((headIndex * 2 + 1 < arrLength) && (headIndex * 2 + 2 < arrLength))
 		{
-			if (arr[headIndex * 2 + 1] < arr[headIndex * 2 + 2])
+			if (cmp(arr[headIndex * 2 + 1], arr[headIndex * 2 + 2]) < 0) //left child smaller than right child
 			{
 				swapIndex = headIndex * 2 + 1;
 			}
-			else
+			else //right child smaller than left child
 			{
 				swapIndex = headIndex * 2 + 2;
 			}
 		}
-		else if (headIndex * 2 + 1 < length)
+		else if (headIndex * 2 + 1 < arrLength) //if it only has one child, make that the swapIndex
 		{
 			swapIndex = headIndex * 2 + 1;
 		}
-		else
+		else //if there are no children, break out of this loop
 		{
 			break;
 		}
 		//actually swapping and terminating if no need to swap
-		if (arr[headIndex] > arr[swapIndex])
+		if (cmp(arr[headIndex], arr[swapIndex]) > 0) //swap if the head is larger than the child
 		{
 			temp = arr[headIndex];
 			arr[headIndex] = arr[swapIndex];
@@ -108,42 +112,42 @@ int PriorityQueue::getMin()
 			break;
 		}
 	}
-	length--;
+	arrLength--;
 	return returnValue;
 }
 
-int PriorityQueue::getMax()
+void* PriorityQueue::getMax()
 {
-	int returnValue = arr[0];
-	arr[0] = arr[length - 1];
+	void* returnValue = arr[0];
+	arr[0] = arr[arrLength - 1];
 
 	int headIndex = 0;
 	int swapIndex;
-	int temp;
+	void* temp;
 	while (true)
 	{
 		//determining biggest child
-		if ((headIndex * 2 + 1 < length) && (headIndex * 2 + 2 < length))
+		if ((headIndex * 2 + 1 < arrLength) && (headIndex * 2 + 2 < arrLength))
 		{
-			if (arr[headIndex * 2 + 1] > arr[headIndex * 2 + 2])
+			if (cmp(arr[headIndex * 2 + 1], arr[headIndex * 2 + 2]) > 0) //left child bigger than right child
 			{
 				swapIndex = headIndex * 2 + 1;
 			}
-			else
+			else //right child bigger than left child
 			{
 				swapIndex = headIndex * 2 + 2;
 			}
 		}
-		else if (headIndex * 2 + 1 < length)
+		else if (headIndex * 2 + 1 < arrLength) // if it only has one child, make that swapIndex
 		{
 			swapIndex = headIndex * 2 + 1;
 		}
-		else
+		else //no children is a signal to break out the loop
 		{
 			break;
 		}
 		//actually swapping and terminating if no need to swap
-		if (arr[headIndex] < arr[swapIndex])
+		if (cmp(arr[headIndex], arr[swapIndex]) < 0) //swap if head is smaller than child
 		{
 			temp = arr[headIndex];
 			arr[headIndex] = arr[swapIndex];
@@ -155,35 +159,25 @@ int PriorityQueue::getMax()
 			break;
 		}
 	}
-	length--;
+	arrLength--;
 	return returnValue;
 }
 
-PriorityQueue::PriorityQueue(Type t)
+PriorityQueue::PriorityQueue(Type t, int size, int (*compare)(void*, void*))
 {
 	arr = NULL;
-	length = 0;
+	arrLength = 0;
+	elementSize = size;
 	treeType = t;
-}
-
-PriorityQueue::PriorityQueue(Type t, int len)
-{
-	arr = (int*)calloc(len, sizeof(int));
-	length = len;
-	treeType = t;
+	cmp = compare;
 }
 
 int PriorityQueue::getLength()
 {
-	return length;
+	return arrLength;
 }
 
-int* PriorityQueue::getArray()
-{
-	return arr;
-}
-
-void PriorityQueue::add(int val)
+void PriorityQueue::add(void* val)
 {
 	if (treeType == min)
 	{
@@ -195,7 +189,7 @@ void PriorityQueue::add(int val)
 	}
 }
 
-int PriorityQueue::get()
+void* PriorityQueue::get()
 {
 	if (treeType == min)
 	{
@@ -205,4 +199,9 @@ int PriorityQueue::get()
 	{
 		return getMax();
 	}
+}
+
+void* PriorityQueue::look()
+{
+	return arr[0];
 }

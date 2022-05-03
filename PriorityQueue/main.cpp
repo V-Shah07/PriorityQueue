@@ -14,6 +14,7 @@ void print(int* arr, int length)
 	}
 	printf("\n");
 }
+/*
 void testMax(PriorityQueue q, int num)
 {
 	for (int i = 0; i < num; ++i)
@@ -56,10 +57,19 @@ void testMin(PriorityQueue q, int num)
 	}
 	printf("tree succesfully built!");
 }
+*/
+int cmpInts(void* a, void* b)
+{
+	int* x = (int*)a;
+	int* y = (int*)b;
+
+	return (*x) - (*y);
+}
 int main()
 {
-	//testing git
+
 	srand(time(NULL));
+	/*
 	PriorityQueue maxQueue(PriorityQueue::max);
 	PriorityQueue minQueue(PriorityQueue::min);
 	int num;
@@ -69,5 +79,12 @@ int main()
 	printf("\nHow many elements would you like to add to the min priority queue: ");
 	scanf("%d", &num);
 	testMin(minQueue, num);
-	
+	*/
+	PriorityQueue maxQ(PriorityQueue::max, sizeof(int), cmpInts);
+	int addValue1 = 1;
+	maxQ.add(&addValue1);
+	int addValue2 = 2;
+	maxQ.add(&addValue2);
+	printf("removed %d\n", *((int*)maxQ.get()));
+	printf("removed %d\n\n", *((int*)maxQ.get()));
 }
