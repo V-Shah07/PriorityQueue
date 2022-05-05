@@ -97,30 +97,19 @@ void printStruct(testStruct t)
 }
 int main()
 {
-
 	srand(time(NULL));
-	/*
-	PriorityQueue maxQueue(PriorityQueue::max);
-	PriorityQueue minQueue(PriorityQueue::min);
-	int num;
-	printf("How many elements would you like to add to the max priority queue: ");
-	scanf("%d", &num);
-	testMax(maxQueue, num);
-	printf("\nHow many elements would you like to add to the min priority queue: ");
-	scanf("%d", &num);
-	testMin(minQueue, num);
-	*/
-	PriorityQueue maxQ(PriorityQueue::max, sizeof(int), cmpStruct);
 	testStruct temp[5];
-	int A = 1;
 	int B = 1.0;
 	char C = 'a';
 	for (int i = 0; i < 5; i++)
 	{
-		temp[i].a = A + i;
+		temp[i].a = rand() % 10;
 		temp[i].b = B + i;
 		temp[i].c = C + i;
 	}
+	
+	printf("\n\nMAX Priority Queue test\n\n");
+	PriorityQueue maxQ(PriorityQueue::max, sizeof(int), cmpStruct);
 	for (int i = 0; i < 5; i++)
 	{
 		maxQ.add(&temp[i]);
@@ -132,5 +121,17 @@ int main()
 		printf("Removed: \n");
 		printStruct(*(testStruct*)maxQ.get());
 	}
-
+	printf("\n\nMIN Priority Queue test\n\n");
+	PriorityQueue minQ(PriorityQueue::min, sizeof(int), cmpStruct);
+	for (int i = 0; i < 5; i++)
+	{
+		minQ.add(&temp[i]);
+		printf("Added: \n");
+		printStruct(temp[i]);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		printf("Removed: \n");
+		printStruct(*(testStruct*)minQ.get());
+	}
 }
