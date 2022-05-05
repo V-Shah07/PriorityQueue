@@ -65,6 +65,36 @@ int cmpInts(void* a, void* b)
 
 	return (*x) - (*y);
 }
+struct testStruct
+{
+	int a;
+	double b;
+	char c;
+};
+int cmpStruct(void* a, void* b)
+{
+	testStruct* x = (testStruct*)a;
+	testStruct* y = (testStruct*)b;
+	if (x->a == y->a)
+	{
+		if (x->b == y->b)
+		{
+			return x->c - y->c;
+		}
+		else
+		{
+			return (int)(x->b - y->b);
+		}
+	}
+	else
+	{
+		return x->a - y->a;
+	}
+}
+void printStruct(testStruct t)
+{
+	printf("%d %f %c\n", t.a, t.b, t.c);
+}
 int main()
 {
 
@@ -80,11 +110,27 @@ int main()
 	scanf("%d", &num);
 	testMin(minQueue, num);
 	*/
-	PriorityQueue maxQ(PriorityQueue::max, sizeof(int), cmpInts);
-	int addValue1 = 1;
-	maxQ.add(&addValue1);
-	int addValue2 = 2;
-	maxQ.add(&addValue2);
-	printf("removed %d\n", *((int*)maxQ.get()));
-	printf("removed %d\n\n", *((int*)maxQ.get()));
+	PriorityQueue maxQ(PriorityQueue::max, sizeof(int), cmpStruct);
+	testStruct temp[5];
+	int A = 1;
+	int B = 1.0;
+	char C = 'a';
+	for (int i = 0; i < 5; i++)
+	{
+		temp[i].a = A + i;
+		temp[i].b = B + i;
+		temp[i].c = C + i;
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		maxQ.add(&temp[i]);
+		printf("Added: \n");
+		printStruct(temp[i]);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		printf("Removed: \n");
+		printStruct(*(testStruct*)maxQ.get());
+	}
+
 }
