@@ -4,67 +4,6 @@
 #include "PriorityQueue.h"
 #pragma warning(disable:4996)
 
-void print(int* arr, int length)
-{
-	printf("Length is %d\n", length);
-	for (int i = 0; i < length; ++i)
-	{
-		printf("%d  ", arr[i]);
-		
-	}
-	printf("\n");
-}
-/*
-void testMax(PriorityQueue q, int num)
-{
-	for (int i = 0; i < num; ++i)
-	{
-		q.add((int)rand() % INT_MAX);
-	}
-	printf("Added %d numbers\n", num);
-	int lastRemoved = q.get();
-	int curRemoved;
-	for (int i = 1; i < num; ++i)
-	{
-		curRemoved = q.get();
-		if (curRemoved > lastRemoved)
-		{
-			printf("You did not develop the tree properly.");
-			exit(-1);
-		}
-		lastRemoved = curRemoved;
-	}
-	printf("tree succesfully built!");
-}
-void testMin(PriorityQueue q, int num)
-{
-	for (int i = 0; i < num; ++i)
-	{
-		q.add((int)rand() % 20);
-	}
-	printf("Added %d numbers\n", num);
-	int lastRemoved = q.get();
-	int curRemoved;
-	for (int i = 1; i < num; ++i)
-	{
-		curRemoved = q.get();
-		if (curRemoved < lastRemoved)
-		{
-			printf("You did not develop the tree properly.");
-			exit(-1);
-		}
-		lastRemoved = curRemoved;
-	}
-	printf("tree succesfully built!");
-}
-*/
-int cmpInts(void* a, void* b)
-{
-	int* x = (int*)a;
-	int* y = (int*)b;
-
-	return (*x) - (*y);
-}
 struct testStruct
 {
 	int a;
@@ -91,47 +30,74 @@ int cmpStruct(void* a, void* b)
 		return x->a - y->a;
 	}
 }
-void printStruct(testStruct t)
+void testMax(PriorityQueue q, int num)
 {
-	printf("%d %f %c\n", t.a, t.b, t.c);
+	testStruct* structures = (testStruct*)calloc(num, sizeof(testStruct));
+	for (int i = 0; i < num; ++i)
+	{
+		structures[i].a = rand() % INT_MAX;
+		structures[i].b = (double)(rand() % INT_MAX);
+		structures[i].c = 'a' + rand() % 26;
+		q.add(&structures[i]);
+	}
+	printf("Added %d numbers\n", num);
+	testStruct lastRemoved = *((testStruct*)q.get());
+	testStruct curRemoved;
+	for (int i = 1; i < num; ++i)
+	{
+		curRemoved = *((testStruct*)q.get());
+		if(cmpStruct(&curRemoved, &lastRemoved) > 0)
+		{
+			printf("You did not develop the tree properly.");
+			exit(-1);
+		}
+		lastRemoved = curRemoved;
+	}
+	printf("tree succesfully built!");
 }
+void testMin(PriorityQueue q, int num)
+{
+	testStruct* structures = (testStruct*)calloc(num, sizeof(testStruct));
+	for (int i = 0; i < num; ++i)
+	{
+		structures[i].a = rand() % INT_MAX;
+		structures[i].b = (double)(rand() % INT_MAX);
+		structures[i].c = 'a' + rand() % 26;
+		q.add(&structures[i]);
+	}
+	printf("Added %d numbers\n", num);
+	testStruct lastRemoved = *((testStruct*)q.get());
+	testStruct curRemoved;
+	for (int i = 1; i < num; ++i)
+	{
+		curRemoved = *((testStruct*)q.get());
+		if (cmpStruct(&curRemoved, &lastRemoved) < 0)
+		{
+			printf("You did not develop the tree properly.");
+			exit(-1);
+		}
+		lastRemoved = curRemoved;
+	}
+	printf("tree succesfully built!");
+}
+
 int main()
 {
 	srand(time(NULL));
-	testStruct temp[5];
-	int B = 1.0;
-	char C = 'a';
-	for (int i = 0; i < 5; i++)
-	{
-		temp[i].a = rand() % 10;
-		temp[i].b = B + i;
-		temp[i].c = C + i;
-	}
+	int num;
+	PriorityQueue MaxQ(PriorityQueue::max, sizeof(testStruct), cmpStruct);
+	PriorityQueue MinQ(PriorityQueue::min, sizeof(testStruct), cmpStruct);
+
+
+	printf("How many elements would you like to add to the max priority queue?: ");
+	scanf("%d", &num);
+	testMax(MaxQ, num);
+
+	printf("\n\n");
 	
-	printf("\n\nMAX Priority Queue test\n\n");
-	PriorityQueue maxQ(PriorityQueue::max, sizeof(int), cmpStruct);
-	for (int i = 0; i < 5; i++)
-	{
-		maxQ.add(&temp[i]);
-		printf("Added: \n");
-		printStruct(temp[i]);
-	}
-	for (int i = 0; i < 5; i++)
-	{
-		printf("Removed: \n");
-		printStruct(*(testStruct*)maxQ.get());
-	}
-	printf("\n\nMIN Priority Queue test\n\n");
-	PriorityQueue minQ(PriorityQueue::min, sizeof(int), cmpStruct);
-	for (int i = 0; i < 5; i++)
-	{
-		minQ.add(&temp[i]);
-		printf("Added: \n");
-		printStruct(temp[i]);
-	}
-	for (int i = 0; i < 5; i++)
-	{
-		printf("Removed: \n");
-		printStruct(*(testStruct*)minQ.get());
-	}
+	printf("How many elements would you like to add to the min priority queue?: ");
+	scanf("%d", &num);
+	testMin(MinQ, num);
+
+	printf("\n\n");
 }
