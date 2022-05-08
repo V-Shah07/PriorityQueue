@@ -1,5 +1,5 @@
 #include "PriorityQueue.h"
-
+#include <stdlib.h>
 
 void PriorityQueue::increaseSize()
 {
